@@ -10,13 +10,15 @@ const shortid = require('shortid');
 
 const users = [
   {
-    id: shortid.generate(),
+    id: 1,
     name: 'Denis',
+    bio: 'student',
     age: '26',
   },
   {
-    id: shortid.generate(),
+    id: 2,
     name: 'John',
+    bio: 'teacher',
     age: 35,
   },
 ];
@@ -26,12 +28,27 @@ server.get('/api/users', (req, res) => {
 });
 
 server.get('/api/users/:id', (req, res) => {
-  const { id } = req.params;
-  const user = users.find((realId) => realId == id);
-  
+  const user = users.find((user) => user.id == req.params.id);
+  console.log(user);
+  if (!user) {
+    return res.status(404).json({ Message: 'user not found' });
+  }
+
+  try {
+    user;
+  } catch {
+    res.status(500).json({ errorMessage: 'The user could not be removed' });
+  }
 });
 
-server.post('/api/users', (req, res) => {});
+server.post('/api/users', (req, res) => {
+  const { bio, name } = req.body;
+  if (!bio || !name) {
+    return res.status(400).json({ BadRequest: 'please enter a name and bio for the user' });
+  } else {
+    res.status(201).json({ created: req.body });
+  }
+});
 
 server.put('/api/users/:id', (req, res) => {});
 
